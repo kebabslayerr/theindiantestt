@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desi-Meter 3000</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Head Wobble Animation */
+        @keyframes head-wobble {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+        .wobble { animation: head-wobble 0.5s ease-in-out infinite; }
+        
+        /* Flying Slippers and Petals */
+        @keyframes fly-away {
+            0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(360deg); opacity: 0; }
+        }
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 60;
+            animation: fly-away 2s ease-out forwards;
+        }
+
+        /* Background Mesh */
+        .gradient-mesh {
+            background-color: #ff9933;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(28,100%,74%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 100%, hsla(122,85%,45%,1) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(122,85%,35%,1) 0, transparent 50%);
+        }
+
+        /* Pressure Cooker Steam */
+        .whistle-steam {
+            animation: steam 0.8s ease-out infinite;
+        }
+        @keyframes steam {
+            0% { transform: translateY(0) scale(1); opacity: 0.8; }
+            100% { transform: translateY(-30px) scale(2); opacity: 0; }
+        }
+
+        /* Scanline Effect */
+        .scan-line {
+            background: linear-gradient(to bottom, transparent, rgba(255, 153, 51, 0.5), transparent);
+            height: 10px;
+            width: 100%;
+            position: absolute;
+            animation: move-scan 2s linear infinite;
+        }
+        @keyframes move-scan {
+            from { top: -10%; }
+            to { top: 110%; }
+        }
+
+        /* Custom Scrollbar */
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 153, 51, 0.3);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="gradient-mesh min-h-screen flex items-center justify-center p-2 sm:p-4 font-sans overflow-hidden">
+
+    <div id="app-card" class="bg-white/95 backdrop-blur-md rounded-[2.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.3)] max-w-sm w-full max-h-[95vh] flex flex-col overflow-hidden border-4 border-white transition-all duration-500">
+        
+        <!-- Header: Sticky at top -->
+        <div class="bg-orange-600 p-5 text-white text-center shrink-0 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10 pointer-events-none">
+                <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="white" stroke-width="1"/>
+                    </pattern>
+                    <rect width="100%" height="100%" fill="url(#grid)" />
+                </svg>
+            </div>
+            <h1 class="text-xl font-black italic tracking-widest relative z-10">DESI-METER 3000</h1>
+            <p class="text-[9px] opacity-90 font-mono font-bold tracking-tighter uppercase">Neighborhood Aunty Certified Scanner</p>
+        </div>
+
+        <!-- Main Body: Scrollable area -->
+        <div id="card-content" class="flex-1 overflow-y-auto custom-scroll p-6 relative min-h-[400px]">
+            
+            <!-- State 1: Start -->
+            <div id="state-start" class="text-center flex flex-col justify-center h-full">
+                <div class="w-28 h-28 mx-auto mb-6 bg-orange-50 rounded-full flex items-center justify-center shadow-inner group cursor-pointer">
+                    <div class="group-hover:scale-125 transition-transform duration-300">
+                        <svg viewBox="0 0 100 100" class="w-20 h-20">
+                            <path d="M50 85c-1-1-35-20-35-42 0-12 9-21 21-21 6 0 11 3 14 7 3-4 8-7 14-7 12 0 21 9 21 21 0 22-34 41-35 42z" fill="#FF9933" />
+                            <rect x="15" y="40" width="70" height="15" fill="#FFFFFF" />
+                            <rect x="15" y="55" width="70" height="15" fill="#138808" />
+                            <circle cx="50" cy="47.5" r="5" fill="none" stroke="#000080" stroke-width="0.8" />
+                        </svg>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-black text-gray-800 mb-2 italic">ARE YOU INDIAN?</h2>
+                <p class="text-gray-500 text-sm mb-8 font-medium">Warning: 100% accuracy may cause spontaneous craving for Samosas and Chai.</p>
+                
+                <button onclick="startQuiz()" class="w-full rounded-2xl bg-orange-600 px-8 py-5 font-black text-white transition-all hover:bg-orange-700 hover:shadow-orange-200 hover:shadow-xl active:scale-95 shadow-lg flex items-center justify-center space-x-2">
+                    <span>START SCANNER</span>
+                    <span class="text-xl">👉</span>
+                </button>
+            </div>
+
+            <!-- State 2: Quiz -->
+            <div id="state-quiz" class="hidden">
+                <div class="text-center mb-6">
+                    <div id="quiz-progress-dots" class="flex justify-center space-x-2 mb-3">
+                        <div class="w-2 h-2 rounded-full bg-orange-500"></div>
+                        <div class="w-2 h-2 rounded-full bg-gray-200"></div>
+                        <div class="w-2 h-2 rounded-full bg-gray-200"></div>
+                        <div class="w-2 h-2 rounded-full bg-gray-200"></div>
+                    </div>
+                    <span id="question-number" class="text-[10px] font-black text-orange-500 uppercase tracking-widest">Aptitude Test</span>
+                    <h2 id="question-text" class="text-lg font-black text-gray-800 mt-1 leading-tight min-h-[3rem]">...</h2>
+                </div>
+                <div id="quiz-options" class="space-y-3 pb-4">
+                    <!-- Options injected by JS -->
+                </div>
+            </div>
+
+            <!-- State 3: Scanning -->
+            <div id="state-scanning" class="hidden text-center py-4 flex flex-col justify-center h-full">
+                <div class="relative w-44 h-44 mx-auto mb-8 bg-gray-900 rounded-3xl overflow-hidden border-4 border-gray-800 shadow-2xl">
+                    <div class="scan-line"></div>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <div class="text-[9px] text-green-400 font-mono mb-2">AURA_LEVEL: CRITICAL</div>
+                        <div class="text-6xl wobble">🇮🇳</div>
+                        <div class="text-[9px] text-orange-400 font-mono mt-2">CHAI_RESERVE: 98%</div>
+                    </div>
+                </div>
+                
+                <div class="space-y-4 px-2">
+                    <div class="w-full bg-gray-100 h-5 rounded-full overflow-hidden border-2 border-white shadow-inner">
+                        <div id="progress-bar" class="bg-gradient-to-r from-orange-500 via-white to-green-600 h-full w-0 transition-all duration-200"></div>
+                    </div>
+                    <p id="status-text" class="text-[11px] font-black text-gray-500 italic uppercase tracking-wider">Analyzing spice tolerance...</p>
+                </div>
+            </div>
+
+            <!-- State 4: Result -->
+            <div id="state-result" class="hidden text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <div class="flex justify-center mb-4 space-x-4">
+                    <!-- Pressure Cooker -->
+                    <div class="relative group cursor-pointer hover:scale-110 transition-transform">
+                        <svg viewBox="0 0 100 100" class="w-16 h-16">
+                            <rect x="25" y="45" width="50" height="40" rx="10" fill="#cbd5e1" />
+                            <path d="M45 25 L55 25 L55 45 L45 45 Z" fill="#475569" />
+                            <rect x="42" y="20" width="16" height="8" rx="2" fill="#1e293b" />
+                            <path d="M50 20 L50 5" stroke="#94a3b8" stroke-width="3" class="whistle-steam" />
+                            <rect x="75" y="55" width="15" height="5" rx="2" fill="#1e293b" />
+                        </svg>
+                        <span class="absolute -bottom-2 left-1/2 -translate-x-1/2 text-[8px] font-bold text-gray-400">3 WHISTLES</span>
+                    </div>
+                    <!-- Cricket Bat -->
+                    <div class="group cursor-pointer hover:scale-110 transition-transform">
+                        <svg viewBox="0 0 100 100" class="w-16 h-16">
+                            <rect x="45" y="40" width="12" height="50" rx="2" fill="#d97706" />
+                            <rect x="48" y="10" width="6" height="30" rx="1" fill="#451a03" />
+                            <rect x="45" y="40" width="12" height="10" fill="#dc2626" />
+                        </svg>
+                        <span class="text-[8px] font-bold text-gray-400 block mt-1">SHOT!</span>
+                    </div>
+                </div>
+
+                <h2 class="text-4xl font-black text-gray-900 leading-tight mb-1">URE INDIAN!</h2>
+                <div class="inline-block px-3 py-1 bg-green-100 text-green-700 text-[10px] font-black rounded-full mb-6">100% DESI GENES DETECTED</div>
+
+                <div class="grid grid-cols-2 gap-3 mb-6">
+                    <div class="bg-orange-50 p-4 rounded-3xl border-2 border-orange-100 flex flex-col items-center">
+                        <span class="text-3xl mb-1">☕</span>
+                        <div class="text-[9px] text-orange-800 font-black uppercase">Chai Status</div>
+                        <div class="text-sm font-black">ADDICTED</div>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-3xl border-2 border-green-100 flex flex-col items-center">
+                        <span class="text-3xl mb-1">🩴</span>
+                        <div class="text-[9px] text-green-800 font-black uppercase">Slipper Aim</div>
+                        <div class="text-sm font-black">SNIPER</div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-900 text-white p-5 rounded-[2rem] text-xs font-bold shadow-xl mb-6 relative overflow-hidden group">
+                    <div class="relative z-10 italic leading-relaxed">
+                        "Confirmation: You own at least one steel glass, your remote is wrapped in plastic, and you can fit 15 people in a 5-seater car."
+                    </div>
+                    <div class="absolute -right-4 -bottom-4 text-4xl opacity-10 group-hover:rotate-12 transition-transform">🇮🇳</div>
+                </div>
+
+                <button onclick="location.reload()" class="w-full bg-gray-100 hover:bg-orange-100 text-gray-500 hover:text-orange-600 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-colors mb-4">
+                    Scan your favorite cousin
+                </button>
+            </div>
+        </div>
+
+        <!-- Sticky Footer -->
+        <div id="footer-decor" class="h-3 w-full flex shrink-0 border-t-2 border-white/20">
+            <div class="h-full flex-1 bg-orange-600"></div>
+            <div class="h-full flex-1 bg-white"></div>
+            <div class="h-full flex-1 bg-green-600"></div>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                q: "What do you do when the TV remote stops working?",
+                options: [
+                    { t: "Change the batteries", desi: false },
+                    { t: "Whack it until it fears for its life", desi: true },
+                    { t: "Open it and blow air inside", desi: true }
+                ]
+            },
+            {
+                q: "What is stored in the oven (or microwave) when not in use?",
+                options: [
+                    { t: "Nothing", desi: false },
+                    { t: "Tawa, pans, and 50 Tupperwares", desi: true },
+                    { t: "The bread packet", desi: true }
+                ]
+            },
+            {
+                q: "What happens when you go to a wedding?",
+                options: [
+                    { t: "Enjoy the peaceful ceremony", desi: false },
+                    { t: "Go straight for the Paneer/Chicken tikka", desi: true },
+                    { t: "Dance like no one is watching (they are)", desi: true }
+                ]
+            },
+            {
+                q: "What is your reaction to 'Free Dhaniya'?",
+                options: [
+                    { t: "I don't need it", desi: false },
+                    { t: "It is my birthright", desi: true },
+                    { t: "I will fight the sabzi-wala for it", desi: true }
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let desiScore = 0;
+
+        const statusMessages = [
+            "Detecting hidden stash of Maggi...",
+            "Checking distance to nearest 'Haldirams'...",
+            "Calculating spice tolerance (LEVEL: INSANE)...",
+            "Measuring 'Log Kya Kahenge' anxiety...",
+            "Searching for old plastic bags inside bags...",
+            "Verifying cricket knowledge (Sachin is God?)...",
+            "Confirming ability to haggle for 10 rupees...",
+            "Analyzing head-wobble frequency..."
+        ];
+
+        function startQuiz() {
+            document.getElementById('state-start').classList.add('hidden');
+            document.getElementById('state-quiz').classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const data = quizData[currentQuestion];
+            document.getElementById('question-number').innerText = `DESI TEST ${currentQuestion + 1}/${quizData.length}`;
+            document.getElementById('question-text').innerText = data.q;
+            
+            const dots = document.getElementById('quiz-progress-dots').children;
+            for(let i=0; i<dots.length; i++) {
+                dots[i].className = i <= currentQuestion ? "w-2 h-2 rounded-full bg-orange-500 shadow-sm" : "w-2 h-2 rounded-full bg-gray-200";
+            }
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            
+            data.options.forEach((opt) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-2xl border-2 border-gray-100 hover:border-orange-500 hover:bg-orange-50 transition-all font-bold text-gray-700 text-sm active:scale-95 shadow-sm";
+                btn.innerText = opt.t;
+                btn.onclick = () => selectOption(opt.desi);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(isDesi) {
+            if (isDesi) desiScore++;
+            currentQuestion++;
+            
+            if (currentQuestion < quizData.length) {
+                showQuestion();
+            } else {
+                startScan();
+            }
+        }
+
+        function startScan() {
+            document.getElementById('state-quiz').classList.add('hidden');
+            document.getElementById('state-scanning').classList.remove('hidden');
+            
+            const progress = document.getElementById('progress-bar');
+            const status = document.getElementById('status-text');
+            
+            let currentProgress = 0;
+            const interval = setInterval(() => {
+                currentProgress += Math.random() * 5;
+                if (currentProgress >= 100) {
+                    currentProgress = 100;
+                    clearInterval(interval);
+                    setTimeout(finishScan, 600);
+                }
+                
+                progress.style.width = currentProgress + '%';
+                
+                if (Math.random() > 0.85) {
+                    status.innerText = statusMessages[Math.floor(Math.random() * statusMessages.length)];
+                }
+                
+                // Spawn slippers during scan
+                if (Math.random() > 0.9) spawnParticle('🩴');
+                
+            }, 100);
+        }
+
+        function spawnParticle(emoji) {
+            const particle = document.createElement('div');
+            particle.className = 'particle text-4xl';
+            particle.innerText = emoji;
+            particle.style.left = Math.random() * 80 + 10 + '%';
+            particle.style.top = Math.random() * 80 + 10 + '%';
+            
+            // Random direction
+            const tx = (Math.random() - 0.5) * 400 + 'px';
+            const ty = (Math.random() - 0.5) * 400 + 'px';
+            particle.style.setProperty('--tw-translate-x', tx);
+            particle.style.setProperty('--tw-translate-y', ty);
+            
+            document.body.appendChild(particle);
+            setTimeout(() => particle.remove(), 2000);
+        }
+
+        function finishScan() {
+            document.getElementById('state-scanning').classList.add('hidden');
+            document.getElementById('state-result').classList.remove('hidden');
+            
+            // Celebratory Marigold Flower Shower
+            const flowers = ['🌼', '🌸', '🧡', '🇮🇳'];
+            for(let i=0; i<30; i++) {
+                setTimeout(() => {
+                    spawnParticle(flowers[Math.floor(Math.random() * flowers.length)]);
+                }, i * 50);
+            }
+
+            const card = document.getElementById('app-card');
+            card.classList.add('ring-8', 'ring-green-400');
+            setTimeout(() => card.classList.remove('ring-8', 'ring-green-400'), 1000);
+        }
+    </script>
+</body>
+</html>
